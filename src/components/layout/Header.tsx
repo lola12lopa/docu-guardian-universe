@@ -2,12 +2,19 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Menu, X } from 'lucide-react';
+import { ChevronRight, Menu, X, Sun, Moon } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,6 +44,10 @@ export const Header = () => {
     { name: 'About', href: '/about' },
   ];
 
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 px-6 transition-all duration-300 ease-in-out ${
@@ -49,7 +60,7 @@ export const Header = () => {
             to="/" 
             className="text-2xl font-semibold tracking-tight text-gradient flex items-center"
           >
-            CourseGuardian
+            eduVAULT
           </Link>
         </div>
 
@@ -71,6 +82,21 @@ export const Header = () => {
         </nav>
 
         <div className="hidden md:flex items-center space-x-4">
+          {mounted && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="rounded-full"
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-5 w-5 text-amber-300" />
+              ) : (
+                <Moon className="h-5 w-5 text-slate-700" />
+              )}
+            </Button>
+          )}
           <Link to="/auth/login">
             <Button variant="outline" className="transition-all-ease hover:bg-secondary">
               Sign In
@@ -84,16 +110,33 @@ export const Header = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <button
-          className="md:hidden p-2 rounded-md text-foreground focus:outline-none"
-          onClick={toggleMobileMenu}
-        >
-          {isMobileMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
+        <div className="md:hidden flex items-center space-x-2">
+          {mounted && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="rounded-full"
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-5 w-5 text-amber-300" />
+              ) : (
+                <Moon className="h-5 w-5 text-slate-700" />
+              )}
+            </Button>
           )}
-        </button>
+          <button
+            className="p-2 rounded-md text-foreground focus:outline-none"
+            onClick={toggleMobileMenu}
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
