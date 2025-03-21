@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Button, ButtonProps } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -9,6 +10,10 @@ interface AnimatedButtonProps extends ButtonProps {
   hoverScale?: boolean;
   hoverLift?: boolean;
   ripple?: boolean;
+  glowing?: boolean;
+  gradient?: boolean;
+  outlined?: boolean;
+  iconButton?: boolean;
 }
 
 export const AnimatedButton = ({
@@ -17,6 +22,10 @@ export const AnimatedButton = ({
   hoverScale = false,
   hoverLift = true,
   ripple = false,
+  glowing = false,
+  gradient = false,
+  outlined = false,
+  iconButton = false,
   ...props
 }: AnimatedButtonProps) => {
   const [isRippling, setIsRippling] = React.useState(false);
@@ -45,32 +54,43 @@ export const AnimatedButton = ({
   }, [isRippling]);
 
   return (
-    <Button
-      {...props}
+    <motion.div
+      whileHover={hoverScale ? { scale: 1.05 } : hoverLift ? { y: -4 } : {}}
       className={cn(
-        'relative overflow-hidden transition-all',
-        hoverScale && 'hover:scale-105',
-        hoverLift && 'hover:-translate-y-1',
-        className
+        "relative",
+        glowing && "animate-pulse",
+        iconButton && "rounded-full overflow-hidden"
       )}
-      onClick={handleClick}
     >
-      {ripple && isRippling && (
-        <span
-          className="absolute rounded-full bg-white/30 animate-[ripple_0.5s_ease-out]"
-          style={{
-            left: coords.x,
-            top: coords.y,
-            width: '150px',
-            height: '150px',
-            transform: 'translate(-50%, -50%)',
-            pointerEvents: 'none',
-          }}
-        />
-      )}
-      {children}
-    </Button>
+      <Button
+        {...props}
+        className={cn(
+          'relative overflow-hidden transition-all duration-300',
+          gradient && 'bg-gradient-to-r from-primary to-primary/70 hover:from-primary hover:to-primary/90',
+          outlined && 'border-2 border-primary bg-transparent text-primary hover:bg-primary/10',
+          glowing && 'shadow-[0_0_15px] shadow-primary/50',
+          iconButton && 'rounded-full aspect-square flex items-center justify-center p-0',
+          className
+        )}
+        onClick={handleClick}
+      >
+        {ripple && isRippling && (
+          <span
+            className="absolute rounded-full bg-white/30 animate-[ripple_0.5s_ease-out]"
+            style={{
+              left: coords.x,
+              top: coords.y,
+              width: '150px',
+              height: '150px',
+              transform: 'translate(-50%, -50%)',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+        {children}
+      </Button>
+    </motion.div>
   );
 };
 
-// Add keyframes for ripple animation in global CSS or here with styled-components
+// Add keyframes for ripple animation in index.css
